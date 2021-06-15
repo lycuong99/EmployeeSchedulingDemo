@@ -31,7 +31,8 @@ namespace EmployeeSchedulingDemo
 
         // static int[][][] demands;
         static int[,,] demands;
-        static int maxWorkingTimeInDay = 12;
+        static int maxFTWorkingTimeInDay = 12;
+        static int maxPTWorkingTimeInDay ;
 
         static int numPosition;
         static int maxNormalHours = 8;
@@ -41,9 +42,9 @@ namespace EmployeeSchedulingDemo
         {
             skillStrings= new string[]{ "Pha che", "Thu ngan","Phuc vu"};
 
-            numTimeFrames = 25;
+            numTimeFrames = 24;
             numFTStaffs = 4;
-            numPTStaffs = 6;
+            numPTStaffs = 8;
             numWeeks = 1;
             numDays = numWeeks * 7;
             numDayOffs = 1;
@@ -63,7 +64,8 @@ namespace EmployeeSchedulingDemo
 
             maxShiftDuration = 24;
 
-            maxWorkingTimeInDay = 12;
+            maxFTWorkingTimeInDay = 12;
+            maxPTWorkingTimeInDay = 8;
 
             // 0: bartender,1: cashier,2: waiter
             numPosition = 3;
@@ -156,6 +158,10 @@ namespace EmployeeSchedulingDemo
                 {1,1,1 },
                 {0,1,0 },
                 {0,1,0 },
+                //add more
+                {1,1,1 },
+                {1,1,1 },
+
             };
 
             var availableFT = new int[,,] // [staff][day][time]
@@ -255,7 +261,27 @@ namespace EmployeeSchedulingDemo
                         {0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0, },
                         {0,    0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    0,    0, },
                         {0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
-              }
+              },
+              //add more
+               {
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0,    0,    0,    0,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                },
+              {
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0,    0,    0,    0,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+                        {0,    0,    0,    0,    0,    0,    0,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0, },
+
+              },
           };
 
 
@@ -323,8 +349,8 @@ namespace EmployeeSchedulingDemo
 
 
             //Tổng thời gian làm việc 1 ngày < maxHoursInDay
-            AddMaxWorkingTimeInDayConstraints(model1, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, maxWorkingTimeInDay);
-            AddMaxWorkingTimeInDayConstraints(model2, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, maxWorkingTimeInDay);
+            AddMaxWorkingTimeInDayConstraints(model1, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, maxFTWorkingTimeInDay);
+            AddMaxWorkingTimeInDayConstraints(model2, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, maxPTWorkingTimeInDay);
 
             //Mỗi nhân viên chỉ làm việc tại 1 ngày 1 vị trí 1 thời gian:
             AddUniqueWorkConstraint(model1, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames);
@@ -404,7 +430,10 @@ namespace EmployeeSchedulingDemo
             {
                 foreach (int t in Range(numTimeFrames))
                 {
-
+                    if (t <= timeStart || t >= timeEnd)
+                    {
+                        continue;
+                    }
 
                     foreach (int p in Range(numPosition))
                     {
@@ -417,6 +446,7 @@ namespace EmployeeSchedulingDemo
                         }
 
                         int demand = demands[d, p, t];
+
                         int overCoverPenalty = 1;
                         int underCoverPenalty = 2;
                         //đếm số nhân viên làm việc tại khoảng thời gian t ngày d
@@ -424,7 +454,7 @@ namespace EmployeeSchedulingDemo
                         model1.Add(LinearExpr.Sum(works) == worked);
 
                         var name = $"excessPanalty_demand(shift={t}, position={p}, day={d}";
-                        var excessPanalty = model1.NewIntVar(0, numFTStaffs, name);
+                        var excessPanalty = model1.NewIntVar(0, 100, name);
                         var excess = model1.NewIntVar(-numFTStaffs, numFTStaffs, "excess");
                         var excessAbs = model1.NewIntVar(0, numFTStaffs, "excessAbs");
                         //hệ số xác định tình trạng ca là under / over
@@ -491,186 +521,205 @@ namespace EmployeeSchedulingDemo
             CpSolverStatus status1 = solver.Solve(model1);
 
 
-            using (StreamWriter writer = new StreamWriter("D:\\STS\\out2.csv"))
+            using StreamWriter writer = new StreamWriter("D:\\STS\\out10.csv");
+            Console.SetOut(writer);
+            Console.WriteLine("Statistics");
+            Console.WriteLine($"  - status          : {status1}");
+            Console.WriteLine($"  - conflicts       : {solver.NumConflicts()}");
+            Console.WriteLine($"  - branches        : {solver.NumBranches()}");
+            Console.WriteLine($"  - wall time       : {solver.WallTime()}");
+
+            //work_ft[s, p, d, t] = model1.NewBoolVar($"workFT{s}_{p}_{d}_{t}");
+            if (status1 == CpSolverStatus.Optimal || status1 == CpSolverStatus.Feasible)
             {
-                Console.SetOut(writer);
-                Console.WriteLine(status1);
-
-                //work_ft[s, p, d, t] = model1.NewBoolVar($"workFT{s}_{p}_{d}_{t}");
-                if (status1 == CpSolverStatus.Optimal || status1 == CpSolverStatus.Feasible)
+                foreach (int s in Range(numFTStaffs))
                 {
-                    foreach (int s in Range(numFTStaffs))
+                    //Console.WriteLine($"Staff {s}:");
+                    foreach (int d in Range(numDays))
                     {
-                        //Console.WriteLine($"Staff {s}:");
-                        foreach (int d in Range(numDays))
+                        // Console.WriteLine($"\tDay {d}:");
+                        foreach (int p in Range(numPosition))
                         {
-                           // Console.WriteLine($"\tDay {d}:");
-                            foreach (int p in Range(numPosition))
-                            {
 
-                               // Console.Write($",,");
-                                foreach (int t in Range(numTimeFrames))
-                                {
-                                   // Console.Write($"{solver.Value(work_ft[s, p, d, t])},");
-                                    sch_ft[s, p, d, t] = (int)solver.Value(work_ft[s, p, d, t]);
-                                }
-                                //Console.WriteLine();
+                            // Console.Write($",,");
+                            foreach (int t in Range(numTimeFrames))
+                            {
+                                // Console.Write($"{solver.Value(work_ft[s, p, d, t])},");
+                                sch_ft[s, p, d, t] = (int)solver.Value(work_ft[s, p, d, t]);
                             }
+                            //Console.WriteLine();
                         }
                     }
+                }
 
 
-                    /*                    foreach (int d in Range(numDays)) 
+                /*                    foreach (int d in Range(numDays)) 
+                                    {
+                                        Console.WriteLine($"\tDay {d}:");
+                                        foreach (int p in Range(numPosition))
                                         {
-                                            Console.WriteLine($"\tDay {d}:");
-                                            foreach (int p in Range(numPosition))
+                                            Console.WriteLine($"Skill {skillStrings[p]}:");
+                                            foreach (int s in Range(numFTStaffs)) 
                                             {
-                                                Console.WriteLine($"Skill {skillStrings[p]}:");
-                                                foreach (int s in Range(numFTStaffs)) 
+                                                Console.WriteLine($"Staff {s}:");
+                                                Console.Write($",,");
+                                                foreach (int t in Range(numTimeFrames))
                                                 {
-                                                    Console.WriteLine($"Staff {s}:");
-                                                    Console.Write($",,");
-                                                    foreach (int t in Range(numTimeFrames))
-                                                    {
-                                                        Console.Write($"{solver.Value(work_ft[s, p, d, t])},");
-                                                        sch_ft[s, p, d, t] = (int)solver.Value(work_ft[s, p, d, t]);
-                                                    }
-                                                    Console.WriteLine();
+                                                    Console.Write($"{solver.Value(work_ft[s, p, d, t])},");
+                                                    sch_ft[s, p, d, t] = (int)solver.Value(work_ft[s, p, d, t]);
                                                 }
+                                                Console.WriteLine();
                                             }
-                                        }*/
-                }
-                else
+                                        }
+                                    }*/
+            }
+            else
+            {
+                Console.WriteLine("Ending....");
+                return;
+            }
+
+
+
+            //STSSolutionPrinter cb = new STSSolutionPrinter(work_ft, numFTStaffs, numDays, numTimeFrames, numPosition, Enumerable.Range(0, 10), objIntVars, objIntCoeffs);
+            //solver.SearchAllSolutions(model1, cb);
+
+
+
+
+            // solver.SearchAllSolutions(model1, cb);
+
+            //get new schedule
+
+            //new demand date skill time
+            foreach (int d in Range(numDays))
+            {
+                foreach (int t in Range(numTimeFrames))
                 {
-                    Console.WriteLine("Ending....");
-                    return;
-                }
-
-
-
-                //STSSolutionPrinter cb = new STSSolutionPrinter(work_ft, numFTStaffs, numDays, numTimeFrames, numPosition, Enumerable.Range(0, 10), objIntVars, objIntCoeffs);
-                //solver.SearchAllSolutions(model1, cb);
-
-
-
-
-                // solver.SearchAllSolutions(model1, cb);
-
-                //get new schedule
-
-                //new demand date skill time
-                foreach (int d in Range(numDays))
-                {
-                    foreach (int t in Range(numTimeFrames))
+                    if (t <= timeStart || t >= timeEnd)
                     {
-                        if (t >= timeStart || t <= timeEnd)
+                        continue;
+                    }
+
+                    foreach (int p in Range(numPosition))
+                    {
+                        var worked = new int[numFTStaffs];
+                        foreach (int s in Range(numFTStaffs))
                         {
-                            continue;
+                            worked[s] = sch_ft[s, p, d, t];
                         }
-
-                        foreach (int p in Range(numPosition))
-                        {
-                            var worked = new int[numFTStaffs];
-                            foreach (int s in Range(numFTStaffs))
-                            {
-                                worked[s] = sch_ft[s, p, d, t];
-                            }
-                            //Update demands
-                            demands[d, p, t] = demands[d, p, t] - worked.Sum();
+                        //Update demands
+                        demands[d, p, t] = demands[d, p, t] - worked.Sum();
 
 
-                        }
                     }
                 }
+            }
 
 
-                //cover constrain for parttime
-                foreach (int d in Range(numDays))
+            //cover constrain for parttime
+            foreach (int d in Range(numDays))
+            {
+                foreach (int t in Range(numTimeFrames))
                 {
-                    foreach (int t in Range(numTimeFrames))
+                    if (t <= timeStart || t >= timeEnd)
+                    {
+                        continue;
+                    }
+
+                    foreach (int p in Range(numPosition))
                     {
 
-                        foreach (int p in Range(numPosition))
+                        var works = new List<IntVar>();
+
+                        foreach (int s in Range(numPTStaffs))
                         {
-
-                            var works = new List<IntVar>();
-
-                            foreach (int s in Range(numPTStaffs))
-                            {
-                                works.Add(work_pt[s, p, d, t]);
-                            }
-
-                            int demand = demands[d, p, t];
-                            int overCoverPenalty = 1;
-                            int underCoverPenalty = 3;
-                            //đếm số nhân viên làm việc tại khoảng thời gian t ngày d
-                            var worked = model2.NewIntVar(0, numPTStaffs, "");
-                            model2.Add(LinearExpr.Sum(works) == worked);
-
-                            var name = $"excessPanalty_demand(shift={t}, numPTStaffs={p}, day={d}";
-                            var excessPanalty = model2.NewIntVar(0, numPTStaffs, name);
-                            var excess = model2.NewIntVar(-numPTStaffs, numPTStaffs, "excess");
-                            var excessAbs = model2.NewIntVar(0, numPTStaffs, "excessAbs");
-                            //hệ số xác định tình trạng ca là under / over
-
-                            var a = model2.NewIntVar(0, numPTStaffs, "alpha");
-                            // b = reality - demand
-                            // a = (b + |b|)/2 => a = 0 if under || a = b if over
-                            // excess panalty = a*overPanalty + (|b| - a)*underPanalty
-                            model2.Add(excess == worked - demand);
-                            model1.AddAbsEquality(excessAbs, excess);
-
-                            model2.Add(2 * a == (excess + excessAbs));
-                            model2.Add(excessPanalty == a * overCoverPenalty + (excessAbs - a) * underCoverPenalty);
-
-                            objIntVars2.Add(excessPanalty);
-                            objIntCoeffs2.Add(1);
-
+                            works.Add(work_pt[s, p, d, t]);
                         }
+                        var countFTWorks = 0;
+
+                        foreach (int s in Range(numFTStaffs))
+                        {
+                            if (sch_ft[s, p, d, t] == 1) countFTWorks++;
+                        }
+
+                        int demand = demands[d, p, t];
+                        int overCoverPenalty = 1;
+                        int underCoverPenalty = 3;
+                        //đếm số nhân viên làm việc tại khoảng thời gian t ngày d
+                        var worked = model2.NewIntVar(0, numPTStaffs, "");
+                        model2.Add(LinearExpr.Sum(works) == worked);
+                        model2.Add(LinearExpr.Sum(works) + countFTWorks > 0);
+
+                        var name = $"excessPanalty_demand(shift={t}, position={p}, day={d}";
+                        var excessPanalty = model2.NewIntVar(0, 100, name);
+                        var excess = model2.NewIntVar(-numPTStaffs, numPTStaffs, "excess");
+                        var excessAbs = model2.NewIntVar(0, numPTStaffs, "excessAbs");
+                        //hệ số xác định tình trạng ca là under / over
+
+                        var a = model2.NewIntVar(0, numPTStaffs, "alpha");
+                        // b = reality - demand
+                        // a = (b + |b|)/2 => a = 0 if under || a = b if over
+                        // excess panalty = a*overPanalty + (|b| - a)*underPanalty
+                        model2.Add(excess == worked - demand);
+                        model2.AddAbsEquality(excessAbs, excess);
+
+                        model2.Add(2 * a == (excess + excessAbs));
+                        model2.Add(excessPanalty == a * overCoverPenalty + (excessAbs - a) * underCoverPenalty);
+
+                        /*objIntVars2.Add(excessPanalty);
+                        objIntCoeffs2.Add(1);*/
+
                     }
                 }
-                // Objective
-                var objIntSum2 = LinearExpr.ScalProd(objIntVars2, objIntCoeffs2);
+            }
+
+            // Objective
+            var objIntSum2 = LinearExpr.ScalProd(objIntVars2, objIntCoeffs2);
 
                 model2.Minimize(objIntSum2);
 
-                CpSolverStatus status2 = solver.Solve(model2);
-                Console.WriteLine();
-                Console.WriteLine(status2);
-                if (status2 == CpSolverStatus.Optimal || status2 == CpSolverStatus.Feasible)
+            CpSolverStatus status2 = solver.Solve(model2);
+            Console.WriteLine();
+            Console.WriteLine("Statistics");
+            Console.WriteLine($"  - status          : {status2}");
+            Console.WriteLine($"  - conflicts       : {solver.NumConflicts()}");
+            Console.WriteLine($"  - branches        : {solver.NumBranches()}");
+            Console.WriteLine($"  - wall time       : {solver.WallTime()}");
+
+            if (status2 == CpSolverStatus.Optimal || status2 == CpSolverStatus.Feasible)
+            {
+
+                foreach (int d in Range(numDays))
                 {
-
-                    foreach (int d in Range(numDays))
+                    Console.WriteLine($"\tDay {d}:");
+                    foreach (int p in Range(numPosition))
                     {
-                        Console.WriteLine($"\tDay {d}:");
-                        foreach (int p in Range(numPosition))
+                        Console.WriteLine($"Skill {skillStrings[p]}:");
+
+
+                        foreach (int s in Range(numFTStaffs))
                         {
-                            Console.WriteLine($"Skill {skillStrings[p]}:");
-
-
-                            foreach (int s in Range(numFTStaffs))
+                            Console.WriteLine($"Staff {s}:");
+                            Console.Write($",,");
+                            foreach (int t in Range(numTimeFrames))
                             {
-                                Console.WriteLine($"Staff {s}:");
-                                Console.Write($",,");
-                                foreach (int t in Range(numTimeFrames))
-                                {
-                                    Console.Write($"{sch_ft[s, p, d, t]},");
-                                    //sch_ft[s, p, d, t] = (int)solver.Value(work_ft[s, p, d, t]);
-                                }
-                                Console.WriteLine();
+                                Console.Write($"{sch_ft[s, p, d, t]},");
+                                //sch_ft[s, p, d, t] = (int)solver.Value(work_ft[s, p, d, t]);
                             }
+                            Console.WriteLine();
+                        }
 
-                            foreach (int s in Range(numPTStaffs))
+                        foreach (int s in Range(numPTStaffs))
+                        {
+                            Console.WriteLine($"Staff {s + numFTStaffs}/ s:");
+                            Console.Write($",,");
+                            foreach (int t in Range(numTimeFrames))
                             {
-                                Console.WriteLine($"Staff {s + numFTStaffs}/ s:");
-                                Console.Write($",,");
-                                foreach (int t in Range(numTimeFrames))
-                                {
-                                    Console.Write($"{solver.Value(work_pt[s, p, d, t])},");
-                                    sch_pt[s, p, d, t] = (int)solver.Value(work_pt[s, p, d, t]);
-                                }
-                                Console.WriteLine();
+                                Console.Write($"{solver.Value(work_pt[s, p, d, t])},");
+                                sch_pt[s, p, d, t] = (int)solver.Value(work_pt[s, p, d, t]);
                             }
+                            Console.WriteLine();
                         }
                     }
                 }
