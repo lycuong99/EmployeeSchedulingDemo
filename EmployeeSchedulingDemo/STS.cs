@@ -32,15 +32,16 @@ namespace EmployeeSchedulingDemo
         // static int[][][] demands;
         static int[,,] demands;
         static int maxFTWorkingTimeInDay = 12;
-        static int maxPTWorkingTimeInDay ;
+        static int maxPTWorkingTimeInDay;
 
         static int numPosition;
         static int maxNormalHours = 8;
 
         static string[] skillStrings;
+
         static void Init()
         {
-            skillStrings= new string[]{ "Pha che", "Thu ngan","Phuc vu"};
+            skillStrings = new string[] { "Pha che", "Thu ngan", "Phuc vu" };
 
             numTimeFrames = 24;
             numFTStaffs = 4;
@@ -125,10 +126,11 @@ namespace EmployeeSchedulingDemo
 
 
         }
+
         public static void Solve()
         {
             Init();
-
+            var totalStaff = numFTStaffs + numPTStaffs;
             //day time pos
             var underCoverPenalties = new int[][][] { };
             var overCoverPenalties = new int[][][] { };
@@ -165,7 +167,7 @@ namespace EmployeeSchedulingDemo
             };
 
             var availableFT = new int[,,] // [staff][day][time]
-          {
+            {
                {
                         {1,   1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,  },
                         {1,   1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,  },
@@ -201,7 +203,7 @@ namespace EmployeeSchedulingDemo
                         {1,   1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,  },
                         {1,   1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,  }
                 }
-          };
+            };
 
             var availablePT = new int[,,] // [staff][day][time]
           {
@@ -286,12 +288,13 @@ namespace EmployeeSchedulingDemo
 
 
             var model1 = new CpModel();
-            var model2 = new CpModel();
+            //var model1 = new CpModel();
 
             //Define matrix
 
             IntVar[,,,] work_ft = new IntVar[numFTStaffs, numPosition, numDays, numTimeFrames];
             int[,,,] sch_ft = new int[numFTStaffs, numPosition, numDays, numTimeFrames];
+
             IntVar[,,,] work_pt = new IntVar[numPTStaffs, numPosition, numDays, numTimeFrames];
             int[,,,] sch_pt = new int[numPTStaffs, numPosition, numDays, numTimeFrames];
 
@@ -320,7 +323,7 @@ namespace EmployeeSchedulingDemo
                     foreach (int d in Range(numDays))
                     {
                         foreach (int t in Range(numTimeFrames))
-                            work_pt[s, p, d, t] = model2.NewBoolVar($"workPT{s}_{p}_{d}_{t}");
+                            work_pt[s, p, d, t] = model1.NewBoolVar($"workPT{s}_{p}_{d}_{t}");
                     }
                 }
             }
@@ -330,7 +333,7 @@ namespace EmployeeSchedulingDemo
             AddWokingInAvailableTimeConstrain(model1, work_ft, availableFT, numFTStaffs, numPosition, numDays, numTimeFrames);
 
             //Nhân viên làm việc trong khoảng thời gian rãnh
-            AddWokingInAvailableTimeConstrain(model2, work_pt, availablePT, numPTStaffs, numPosition, numDays, numTimeFrames);
+            AddWokingInAvailableTimeConstrain(model1, work_pt, availablePT, numPTStaffs, numPosition, numDays, numTimeFrames);
 
             //Tổng thời gian làm việc 1 tuần của nhân viên Fulltime, PartTime làm việc luôn nằm trong khoảng (min, max)
             foreach (int s in Range(numFTStaffs))
@@ -340,30 +343,30 @@ namespace EmployeeSchedulingDemo
 
             foreach (int s in Range(numPTStaffs))
             {
-                AddLimitWokingTimeByWeekConstraint(model2, work_pt, s, numPosition, numDays, numTimeFrames, minPTWorkOnWeek, maxPTWorkOnWeek);
+                AddLimitWokingTimeByWeekConstraint(model1, work_pt, s, numPosition, numDays, numTimeFrames, minPTWorkOnWeek, maxPTWorkOnWeek);
             }
 
-            //Constrains Ca làm việc có thể bắt đầu từ timeStart và kết thúc trước timeEnd 
+            //Constrains Ca làm việc có thể bắt đầu từ timeStart và kết thúc trước timeEnd
             AddDomainWokingTimeConstraints(model1, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, timeStart, timeEnd);
-            AddDomainWokingTimeConstraints(model2, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, timeStart, timeEnd);
-
+            AddDomainWokingTimeConstraints(model1, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, timeStart, timeEnd);
 
             //Tổng thời gian làm việc 1 ngày < maxHoursInDay
             AddMaxWorkingTimeInDayConstraints(model1, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, maxFTWorkingTimeInDay);
-            AddMaxWorkingTimeInDayConstraints(model2, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, maxPTWorkingTimeInDay);
+            AddMaxWorkingTimeInDayConstraints(model1, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, maxPTWorkingTimeInDay);
 
             //Mỗi nhân viên chỉ làm việc tại 1 ngày 1 vị trí 1 thời gian:
             AddUniqueWorkConstraint(model1, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames);
-            AddUniqueWorkConstraint(model2, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames);
+            AddUniqueWorkConstraint(model1, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames);
 
             //Nhân viên Fulltime được nghỉ ít nhất n ngày trong tuần
             AddMinDayOffConstrains(model1, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, numDayOffs);
 
             //Nhân viên e chỉ có thể làm việc tại các vị trí mà người đó đã đăng kí sẵn trong hợp đồng
             AddWorkBySkillConstraint(model1, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, skillFTStaffs);
-            AddWorkBySkillConstraint(model2, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, skillPTStaffs);
+            AddWorkBySkillConstraint(model1, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, skillPTStaffs);
 
             //Ca làm việc là những khoảng thời gian liên tục lớn hơn minShift
+
             //Có tối đa maxShiftsInDay
             foreach (int s in Range(numFTStaffs))
             {
@@ -397,7 +400,7 @@ namespace EmployeeSchedulingDemo
             {
                 foreach (int d in Range(numDays))
                 {
-                    var countShifts_Day = model2.NewIntVar(0, maxShiftsInDay * 2, $"count_shift_day(day={d},staff={s}");
+                    var countShifts_Day = model1.NewIntVar(0, maxShiftsInDay * 2, $"count_shift_day(day={d},staff={s}");
                     var countShift_Pos_s = new IntVar[numPosition];
                     foreach (int p in Range(numPosition))
                     {
@@ -409,15 +412,15 @@ namespace EmployeeSchedulingDemo
 
                         //đếm số ca làm việc = countShift_Pos/2
                         //countShift_Pos = số ca làm việc * 2
-                        var countShift_Pos = model2.NewIntVar(0, maxShiftsInDay * 2, $"count_shift_pos");
+                        var countShift_Pos = model1.NewIntVar(0, maxShiftsInDay * 2, $"count_shift_pos");
                         countShift_Pos_s[p] = countShift_Pos;
 
                         //xác định có làm việc không tại day d, staff s, pos p
-                        var isDontWortAt = model2.NewBoolVar($"prod");
-                        AddSequenceConstraint(model2, works, maxShiftsInDay, minShiftDuration, numTimeFrames, countShift_Pos, isDontWortAt);
+                        var isDontWortAt = model1.NewBoolVar($"prod");
+                        AddSequenceConstraint(model1, works, maxShiftsInDay, minShiftDuration, numTimeFrames, countShift_Pos, isDontWortAt);
 
                     }
-                    model2.Add(countShifts_Day == LinearExpr.Sum(countShift_Pos_s));
+                    model1.Add(countShifts_Day == LinearExpr.Sum(countShift_Pos_s));
                 }
             }
 
@@ -425,7 +428,8 @@ namespace EmployeeSchedulingDemo
                         // = 1 nếu ngày đó nhân viên làm và ngược lại
                         // var workDays = new IntVar[numFTStaffs, numDays];
             */
-            //cover constrains for fulltime
+
+            //cover constraints for fulltime
             foreach (int d in Range(numDays))
             {
                 foreach (int t in Range(numTimeFrames))
@@ -445,21 +449,28 @@ namespace EmployeeSchedulingDemo
                             works.Add(work_ft[s, p, d, t]);
                         }
 
+                        foreach (int s in Range(numPTStaffs))
+                        {
+                            works.Add(work_pt[s, p, d, t]);
+                        }
+
                         int demand = demands[d, p, t];
 
-                        int overCoverPenalty = 1;
-                        int underCoverPenalty = 2;
+                        int overCoverPenalty = d == 5 || d == 6 ? 2 : 1;
+                        int underCoverPenalty = d == 5 || d == 6 ? 6 : 3;
+
                         //đếm số nhân viên làm việc tại khoảng thời gian t ngày d
-                        var worked = model1.NewIntVar(0, numFTStaffs, "");
+
+                        var worked = model1.NewIntVar(1, totalStaff, "");
                         model1.Add(LinearExpr.Sum(works) == worked);
 
                         var name = $"excessPanalty_demand(shift={t}, position={p}, day={d}";
                         var excessPanalty = model1.NewIntVar(0, 100, name);
-                        var excess = model1.NewIntVar(-numFTStaffs, numFTStaffs, "excess");
-                        var excessAbs = model1.NewIntVar(0, numFTStaffs, "excessAbs");
-                        //hệ số xác định tình trạng ca là under / over
+                        var excess = model1.NewIntVar(-totalStaff, totalStaff, "excess");
+                        var excessAbs = model1.NewIntVar(0, totalStaff, "excessAbs");
 
-                        var a = model1.NewIntVar(0, numFTStaffs, "alpha");
+                        //hệ số xác định tình trạng ca là under / over
+                        var a = model1.NewIntVar(0, totalStaff, "alpha");
                         // b = reality - demand
                         // a = (b + |b|)/2 => a = 0 if under || a = b if over
                         // excess panalty = a*overPanalty + (|b| - a)*underPanalty
@@ -476,11 +487,11 @@ namespace EmployeeSchedulingDemo
             }
 
             //OT minimize
-            foreach (int s in Range(numFTStaffs)) 
+            foreach (int s in Range(numFTStaffs))
             {
-                foreach (int d in Range(numDays)) 
+                foreach (int d in Range(numDays))
                 {
-                   
+
                     var works = new List<IntVar>();
                     foreach (int p in Range(numPosition))
                     {
@@ -513,15 +524,17 @@ namespace EmployeeSchedulingDemo
             }
 
             // Objective
-              var objIntSum = LinearExpr.ScalProd(objIntVars, objIntCoeffs);
+            var objIntSum = LinearExpr.ScalProd(objIntVars, objIntCoeffs);
 
-              model1.Minimize(objIntSum);
+            model1.Minimize(objIntSum);
 
             CpSolver solver = new CpSolver();
+            // Adds a time limit. Parameters are stored as strings in the solver.
+            solver.StringParameters = "num_search_workers:8, log_search_progress: true, max_time_in_seconds:120";
             CpSolverStatus status1 = solver.Solve(model1);
 
 
-            using StreamWriter writer = new StreamWriter("D:\\STS\\out10.csv");
+            using StreamWriter writer = new StreamWriter("D:\\STS\\outGop2.csv");
             Console.SetOut(writer);
             Console.WriteLine("Statistics");
             Console.WriteLine($"  - status          : {status1}");
@@ -551,144 +564,6 @@ namespace EmployeeSchedulingDemo
                         }
                     }
                 }
-
-
-                /*                    foreach (int d in Range(numDays)) 
-                                    {
-                                        Console.WriteLine($"\tDay {d}:");
-                                        foreach (int p in Range(numPosition))
-                                        {
-                                            Console.WriteLine($"Skill {skillStrings[p]}:");
-                                            foreach (int s in Range(numFTStaffs)) 
-                                            {
-                                                Console.WriteLine($"Staff {s}:");
-                                                Console.Write($",,");
-                                                foreach (int t in Range(numTimeFrames))
-                                                {
-                                                    Console.Write($"{solver.Value(work_ft[s, p, d, t])},");
-                                                    sch_ft[s, p, d, t] = (int)solver.Value(work_ft[s, p, d, t]);
-                                                }
-                                                Console.WriteLine();
-                                            }
-                                        }
-                                    }*/
-            }
-            else
-            {
-                Console.WriteLine("Ending....");
-                return;
-            }
-
-
-
-            //STSSolutionPrinter cb = new STSSolutionPrinter(work_ft, numFTStaffs, numDays, numTimeFrames, numPosition, Enumerable.Range(0, 10), objIntVars, objIntCoeffs);
-            //solver.SearchAllSolutions(model1, cb);
-
-
-
-
-            // solver.SearchAllSolutions(model1, cb);
-
-            //get new schedule
-
-            //new demand date skill time
-            foreach (int d in Range(numDays))
-            {
-                foreach (int t in Range(numTimeFrames))
-                {
-                    if (t <= timeStart || t >= timeEnd)
-                    {
-                        continue;
-                    }
-
-                    foreach (int p in Range(numPosition))
-                    {
-                        var worked = new int[numFTStaffs];
-                        foreach (int s in Range(numFTStaffs))
-                        {
-                            worked[s] = sch_ft[s, p, d, t];
-                        }
-                        //Update demands
-                        demands[d, p, t] = demands[d, p, t] - worked.Sum();
-
-
-                    }
-                }
-            }
-
-
-            //cover constrain for parttime
-            foreach (int d in Range(numDays))
-            {
-                foreach (int t in Range(numTimeFrames))
-                {
-                    if (t <= timeStart || t >= timeEnd)
-                    {
-                        continue;
-                    }
-
-                    foreach (int p in Range(numPosition))
-                    {
-
-                        var works = new List<IntVar>();
-
-                        foreach (int s in Range(numPTStaffs))
-                        {
-                            works.Add(work_pt[s, p, d, t]);
-                        }
-                        var countFTWorks = 0;
-
-                        foreach (int s in Range(numFTStaffs))
-                        {
-                            if (sch_ft[s, p, d, t] == 1) countFTWorks++;
-                        }
-
-                        int demand = demands[d, p, t];
-                        int overCoverPenalty = 1;
-                        int underCoverPenalty = 3;
-                        //đếm số nhân viên làm việc tại khoảng thời gian t ngày d
-                        var worked = model2.NewIntVar(0, numPTStaffs, "");
-                        model2.Add(LinearExpr.Sum(works) == worked);
-                        model2.Add(LinearExpr.Sum(works) + countFTWorks > 0);
-
-                        var name = $"excessPanalty_demand(shift={t}, position={p}, day={d}";
-                        var excessPanalty = model2.NewIntVar(0, 100, name);
-                        var excess = model2.NewIntVar(-numPTStaffs, numPTStaffs, "excess");
-                        var excessAbs = model2.NewIntVar(0, numPTStaffs, "excessAbs");
-                        //hệ số xác định tình trạng ca là under / over
-
-                        var a = model2.NewIntVar(0, numPTStaffs, "alpha");
-                        // b = reality - demand
-                        // a = (b + |b|)/2 => a = 0 if under || a = b if over
-                        // excess panalty = a*overPanalty + (|b| - a)*underPanalty
-                        model2.Add(excess == worked - demand);
-                        model2.AddAbsEquality(excessAbs, excess);
-
-                        model2.Add(2 * a == (excess + excessAbs));
-                        model2.Add(excessPanalty == a * overCoverPenalty + (excessAbs - a) * underCoverPenalty);
-
-                        /*objIntVars2.Add(excessPanalty);
-                        objIntCoeffs2.Add(1);*/
-
-                    }
-                }
-            }
-
-            // Objective
-            var objIntSum2 = LinearExpr.ScalProd(objIntVars2, objIntCoeffs2);
-
-                model2.Minimize(objIntSum2);
-
-            CpSolverStatus status2 = solver.Solve(model2);
-            Console.WriteLine();
-            Console.WriteLine("Statistics");
-            Console.WriteLine($"  - status          : {status2}");
-            Console.WriteLine($"  - conflicts       : {solver.NumConflicts()}");
-            Console.WriteLine($"  - branches        : {solver.NumBranches()}");
-            Console.WriteLine($"  - wall time       : {solver.WallTime()}");
-
-            if (status2 == CpSolverStatus.Optimal || status2 == CpSolverStatus.Feasible)
-            {
 
                 foreach (int d in Range(numDays))
                 {
