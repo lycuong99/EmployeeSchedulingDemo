@@ -942,6 +942,7 @@ namespace EmployeeSchedulingDemo
 
                     foreach (var (i, var) in objIntVars.Select((x, i) => (i, x)))
                     {
+                        
                         if (Value(var) > 0)
                         {
                             Console.WriteLine(

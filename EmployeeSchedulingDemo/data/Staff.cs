@@ -5,11 +5,14 @@ namespace EmployeeSchedulingDemo.data
     class Staff
     {
         private int id;
-        private int[][] availables; //[day][timeIndex]
+        public string Name { get; set; }
+        public AvailableTime[] Availables { get; set; }//[day][timeIndex]
         private bool isFulltime;
-        private int[] positions;
+        public Skill[] Skills { get; set; }
+
+
         public int Id { get => id; set => id = value; }
-        public int[][] Available { get => availables; set => availables = value; }
+     
         public bool IsFulltime { get => isFulltime; set => isFulltime = value; }
     }
 }
