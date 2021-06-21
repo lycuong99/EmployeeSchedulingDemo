@@ -78,7 +78,8 @@ namespace EmployeeSchedulingDemo
             AddUniqueWorkConstraint(model, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames);
 
             //Nhân viên Fulltime được nghỉ ít nhất n ngày trong tuần
-            AddMinDayOffConstrains(model, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, ConstraintData.MinDayOff);
+            AddMinDayOffConstrains(model, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, ConstraintData.MinDayOff, ConstraintData.MaxDayOff);
+            AddMinDayOffConstrains(model, work_pt, numPTStaffs, numPosition, numDays, numTimeFrames, ConstraintData.MinDayOff, ConstraintData.MaxDayOff);
 
             //Nhân viên e chỉ có thể làm việc tại các vị trí mà người đó đã đăng kí sẵn trong hợp đồng
             AddWorkBySkillConstraint(model, work_ft, numFTStaffs, numPosition, numDays, numTimeFrames, skillFTStaffs);
@@ -108,7 +109,7 @@ namespace EmployeeSchedulingDemo
 
                         //xác định có làm việc không tại day d, staff s, pos p
                         var isDontWortAt = model.NewBoolVar($"prod");
-                        AddSequenceConstraint(model, works, ConstraintData.MaxShiftInDay, ConstraintData.MinFTSessionDuration, numTimeFrames, countShift_Pos, isDontWortAt);
+                        AddSequenceConstraint(model, works, ConstraintData.MaxShiftInDay, ConstraintData.MinFTSessionDuration, ConstraintData.MaxFTSessionDuration, numTimeFrames, countShift_Pos, isDontWortAt);
 
                     }
                     model.Add(countShifts_Day == LinearExpr.Sum(countShift_Pos_s));
@@ -136,7 +137,7 @@ namespace EmployeeSchedulingDemo
 
                         //xác định có làm việc không tại day d, staff s, pos p
                         var isDontWortAt = model.NewBoolVar($"prod");
-                        AddSequenceConstraint(model, works, ConstraintData.MaxShiftInDay, ConstraintData.MinPTSessionDuration, numTimeFrames, countShift_Pos, isDontWortAt);
+                        AddSequenceConstraint(model, works, ConstraintData.MaxShiftInDay, ConstraintData.MinPTSessionDuration, ConstraintData.MaxPTSessionDuration, numTimeFrames, countShift_Pos, isDontWortAt);
 
                     }
                     model.Add(countShifts_Day == LinearExpr.Sum(countShift_Pos_s));
@@ -475,7 +476,7 @@ namespace EmployeeSchedulingDemo
         }
 
         static void AddMinDayOffConstrains(CpModel model, IntVar[,,,] work,
-                                                 int numStaffs, int numPosition, int numDays, int numTimeFrames, int mindayOff)
+                                                 int numStaffs, int numPosition, int numDays, int numTimeFrames, int mindayOff, int maxdayOff)
         {
             foreach (int s in Range(numStaffs))
             {
@@ -501,6 +502,7 @@ namespace EmployeeSchedulingDemo
 
                 // tổng ngày làm việc ít hơn tổng ngày trong tuần trừ số ngày nghỉ tối thiểu
                 model.Add(LinearExpr.Sum(dayWorks) <= numDays - mindayOff);
+                model.Add(LinearExpr.Sum(dayWorks) >= numDays - maxdayOff);
             }
         }
 
@@ -508,7 +510,7 @@ namespace EmployeeSchedulingDemo
         {
 
         }
-        static void AddSequenceConstraint(CpModel model, IntVar[] works, int maxShiftsInDay, int minShiftDuration, int numTimeFrames, IntVar count,
+        static void AddSequenceConstraint(CpModel model, IntVar[] works, int maxShiftsInDay, int minShiftDuration,int maxShiftDuration, int numTimeFrames, IntVar count,
             IntVar isWortAt)
         {
             //Đếm số sub-sequence(ca làm việc)
@@ -568,6 +570,20 @@ namespace EmployeeSchedulingDemo
                     model.AddBoolOr(NegatedBoundedSpan(works, start, length)).OnlyEnforceIf(check);
                 }
             }
+
+            //  cấm các ca làm việc có thời gian maxShiftDuration + 1
+            foreach (var start in Range(works.Length - maxShiftDuration))
+            {
+                var temp = new List<ILiteral>();
+
+                foreach (var i in Range(start, start + maxShiftDuration + 1))
+                {
+                    temp.Add(works[i].Not());
+                }
+                model.AddBoolOr(temp).OnlyEnforceIf(check);
+            }
+
+
         }
 
         /// <summary>
@@ -823,14 +839,15 @@ namespace EmployeeSchedulingDemo
         public int MaxPTWorkOnWeek { get; set; }
         public int MinFTSessionDuration { get; set; }
         public int MinPTSessionDuration { get; set; }
-        public int MaxSessionDuration { get; set; }
+        public int MaxFTSessionDuration { get; set; }
+        public int MaxPTSessionDuration { get; set; }
         public int MaxFTWorkingTimeInDay { get; set; }
         public int MaxPTWorkingTimeInDay { get; set; }
         public int MaxNormalHour { get; set; }
         public int TimeStart { get; set; }
         public int TimeEnd { get; set; }
         public int MaxShiftInDay { get; set; }
-
+        public int MinDistanceBetweenSession { get; set; }
     }
 
 }

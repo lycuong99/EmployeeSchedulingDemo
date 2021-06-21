@@ -59,7 +59,7 @@ namespace EmployeeSchedulingDemo
                 Id = 1,
                 Name = "Bartender"
             };
-            Console.WriteLine(bartender.Equals(bartender1));
+          
             Skill waiter = new Skill()
             {
                 Id = 1,
@@ -1231,17 +1231,26 @@ namespace EmployeeSchedulingDemo
                 {
                     MaxDayOff = 3,
                     MinDayOff = 1,
+
                     MaxFTWorkingTimeOnWeek = 58,
                     MinFTWorkingTimeOnWeek = 40,
+
                     MaxPTWorkOnWeek = 58,
                     MinPTWorkOnWeek = 20,
+
                     MaxFTWorkingTimeInDay = 12,
                     MaxPTWorkingTimeInDay = 8,
+
                     MaxNormalHour = 8,
-                    MaxSessionDuration = 12,
-                    MaxShiftInDay = 2,
-                    MinPTSessionDuration = 5,
+
+                    MaxFTSessionDuration = 12,
                     MinFTSessionDuration = 8,
+
+                    MaxPTSessionDuration = 8,
+                    MinPTSessionDuration = 5,
+
+                    MaxShiftInDay = 2,
+
                     TimeStart = 7,
                     TimeEnd = 22
                 }
