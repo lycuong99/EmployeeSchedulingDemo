@@ -942,7 +942,7 @@ namespace EmployeeSchedulingDemo
 
                     foreach (var (i, var) in objIntVars.Select((x, i) => (i, x)))
                     {
-                        
+
                         if (Value(var) > 0)
                         {
                             Console.WriteLine(
@@ -955,10 +955,7 @@ namespace EmployeeSchedulingDemo
                         StopSearch();
                     }
                 }
-
             }
-
-
         }
 
         /// <summary>
@@ -987,8 +984,6 @@ namespace EmployeeSchedulingDemo
         {
             return solution_count_;
         }
-
-
     }
 
 
