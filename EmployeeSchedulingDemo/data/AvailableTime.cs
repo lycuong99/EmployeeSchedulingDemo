@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace EmployeeSchedulingDemo.data
 {
-    class AvailableTime
+    public class AvailableTime
     {
         public int Day { get; set; }
         public Session[] Sessions { get; set; }
     }
 
-    class AvailablePool
+    public class AvailablePool
     {
         public AvailableTime[] Availables { get; set; }//[day][timeIndex]
 
-     /*   getAvailableTimeByDay()
-        {
+        /*   getAvailableTimeByDay()
+           {
 
-        }*/
+           }*/
     }
 }

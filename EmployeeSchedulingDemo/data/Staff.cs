@@ -2,7 +2,7 @@
 
 namespace EmployeeSchedulingDemo.data
 {
-    class Staff
+    public class Staff
     {
         private int id;
         public string Name { get; set; }
@@ -10,9 +10,8 @@ namespace EmployeeSchedulingDemo.data
         private bool isFulltime;
         public Skill[] Skills { get; set; }
 
-
         public int Id { get => id; set => id = value; }
-     
+
         public bool IsFulltime { get => isFulltime; set => isFulltime = value; }
     }
 }

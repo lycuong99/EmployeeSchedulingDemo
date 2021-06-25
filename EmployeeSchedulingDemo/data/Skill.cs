@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace EmployeeSchedulingDemo.data
 {
-    class Skill
+    public class Skill
     {
         public int Id { get; set; }
-        public string Name { get ; set ; }
+        public string Name { get; set; }
 
         // override object.Equals
         public override bool Equals(object obj)
@@ -26,10 +26,7 @@ namespace EmployeeSchedulingDemo.data
         // override object.GetHashCode
         public override int GetHashCode()
         {
-            // TODO: write your implementation of GetHashCode() here
-            throw new NotImplementedException();
             return base.GetHashCode();
         }
-
-    }  
+    }
 }
