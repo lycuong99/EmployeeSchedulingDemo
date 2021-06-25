@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeSchedulingDemo.data
 {
-    class Session
+    public class Session
     {
         public int Start { get; set; }
         public int End { get; set; }

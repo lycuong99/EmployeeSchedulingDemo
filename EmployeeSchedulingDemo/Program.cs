@@ -59,7 +59,7 @@ namespace EmployeeSchedulingDemo
                 Id = 1,
                 Name = "Bartender"
             };
-          
+
             Skill waiter = new Skill()
             {
                 Id = 1,
@@ -1210,7 +1210,7 @@ namespace EmployeeSchedulingDemo
                         },
                     }
                 },
-               
+
             };
 
             SchedulingHandle schedulingHandle = new()
@@ -1395,12 +1395,12 @@ namespace EmployeeSchedulingDemo
 
         }
     }
+
     public class VarArraySolutionPrinter : CpSolverSolutionCallback
     {
         public VarArraySolutionPrinter(IntVar[] variables)
         {
             variables_ = variables;
-
         }
 
         public override void OnSolutionCallback()
@@ -1489,15 +1489,11 @@ namespace EmployeeSchedulingDemo
 
         }
 
-
-
         private int solution_count_;
         public int SolutionCount()
         {
             return solution_count_;
         }
-
-
     }
 
 }
