@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EmployeeSchedulingDemo.data
+﻿namespace EmployeeSchedulingDemo.data
 {
     public class Skill
     {
@@ -14,7 +8,6 @@ namespace EmployeeSchedulingDemo.data
         // override object.Equals
         public override bool Equals(object obj)
         {
-
             if (obj == null || GetType() != obj.GetType())
             {
                 return false;

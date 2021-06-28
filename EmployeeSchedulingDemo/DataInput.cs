@@ -20,14 +20,17 @@ namespace EmployeeSchedulingDemo
             NumDay = 7;
             NumTimeFrame = 24;
         }
+
         public int GetTotalStaff()
         {
             return StaffDic[TypeStaff.FULL_TIME].Count + StaffDic[TypeStaff.PART_TIME].Count;
         }
+
         public int GetNumSkill()
         {
             return Skills.Count;
         }
+
         public int GetNumStaff(TypeStaff type)
         {
             return type switch
@@ -153,6 +156,7 @@ namespace EmployeeSchedulingDemo
             int NumStaffs = Staffs.Count;
             int NumSkills = Skills.Count;
             int[,] skillMatrixs = new int[NumStaffs, NumSkills];
+
             foreach (int staff in Helper.Range(NumStaffs))
             {
                 foreach (int skill in Helper.Range(NumSkills))

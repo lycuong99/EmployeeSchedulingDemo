@@ -193,7 +193,6 @@ namespace EmployeeSchedulingDemo
 
                         objIntVars.Add(excessPanalty);
                         objIntCoeffs.Add(1);
-
                     }
                 }
             }
@@ -364,7 +363,6 @@ namespace EmployeeSchedulingDemo
             {
                 foreach (int p in Range(numPosition))
                 {
-
                     foreach (int t in Range(numTimeFrames))
                     {
                         sumWorkTimeByWeek.Add(work_ft[staffIndex, p, d, t]);
@@ -632,10 +630,4 @@ namespace EmployeeSchedulingDemo
             return Range(0, stop);
         }
     }
-
-
-
-
-
-
 }

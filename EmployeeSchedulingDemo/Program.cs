@@ -50,13 +50,14 @@ namespace EmployeeSchedulingDemo
 
         static void Main(string[] args)
         {
+            Console.WriteLine("Algorithm processing");
             SchedulingHandle schedulingHandle = new()
             {
                 DataInput = TestingData.SampleDataInput1(),
                 ConstraintData = TestingData.SampleConstraintData1()
             };
 
-            schedulingHandle.Solve("D:\\STS\\outGopNew5.csv", 120);
+            schedulingHandle.Solve("outGopNew5.csv", 120);
         }
         static void SolveShiftScheduling()
         {
